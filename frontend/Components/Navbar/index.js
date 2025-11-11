@@ -1,6 +1,7 @@
 import React from "react";
 import { MdDashboard } from "react-icons/md";
 import { FiSearch, FiSun, FiMoon, FiBell, FiChevronDown } from "react-icons/fi";
+import Image from "next/image";
 
 const Header = ({
   username,
@@ -56,10 +57,12 @@ const Header = ({
             onClick={() => setShowProfile(!showProfile)}
             className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
           >
-            <img
-              src="https://api.dicebear.com/7.x/identicon/svg?seed=admin"
+            <Image
+              src="/icon"
               alt="Profile"
               className="w-8 h-8 rounded-full"
+              width={32}
+              height={32}
             />
             <div className="flex items-center gap-1">
               <span className="text-sm font-medium">{username}</span>

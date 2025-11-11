@@ -18,7 +18,11 @@ const AdminPanel = () => {
   const [showProfile, setShowProfile] = useState(false);
 
   const users = {
-    superadmin: { username: "superadmin", password: "super123", role: "super_admin" },
+    superadmin: {
+      username: "superadmin",
+      password: "super123",
+      role: "super_admin",
+    },
     admin: { username: "admin", password: "admin123", role: "admin" },
   };
 
@@ -30,9 +34,76 @@ const AdminPanel = () => {
   };
 
   const medicines = [
-    { id: 1, name: "Paracetamol", category: "Pain Relief", price: 25, stock: 80 },
-    { id: 2, name: "Cetirizine", category: "Allergy", price: 15, stock: 120 },
-    { id: 3, name: "Amoxicillin", category: "Antibiotic", price: 75, stock: 20 },
+    {
+      id: 1,
+      name: "Paracetamol",
+      company: "Sun Pharma",
+      category: "Pain Relief",
+      type: "tablet",
+      stripSize: "10 tablets",
+      batchNo: "BT2024001",
+      expiryDate: "Dec 2025",
+      price: 45,
+      discount: 10,
+      stock: 150,
+      lowStock: false
+    },
+    {
+      id: 2,
+      name: "Amoxicillin",
+      company: "Cipla",
+      category: "Antibiotic",
+      type: "capsule",
+      stripSize: "15 capsules",
+      batchNo: "BT2024002",
+      expiryDate: "Jun 2026",
+      price: 120,
+      discount: 5,
+      stock: 45,
+      lowStock: false
+    },
+    {
+      id: 3,
+      name: "Cetirizine",
+      company: "Dr. Reddy's",
+      category: "Allergy",
+      type: "tablet",
+      stripSize: "10 tablets",
+      batchNo: "BT2024003",
+      expiryDate: "Mar 2025",
+      price: 35,
+      discount: 15,
+      stock: 12,
+      lowStock: true
+    },
+    {
+      id: 4,
+      name: "Omeprazole",
+      company: "Lupin",
+      category: "Gastric",
+      type: "capsule",
+      stripSize: "14 capsules",
+      batchNo: "BT2024004",
+      expiryDate: "Sep 2026",
+      price: 85,
+      discount: 8,
+      stock: 89,
+      lowStock: false
+    },
+    {
+      id: 5,
+      name: "Azithromycin",
+      company: "Zydus",
+      category: "Antibiotic",
+      type: "tablet",
+      stripSize: "6 tablets",
+      batchNo: "BT2024005",
+      expiryDate: "Nov 2025",
+      price: 150,
+      discount: 12,
+      stock: 8,
+      lowStock: true
+    }
   ];
 
   const handleLogin = () => {
@@ -59,7 +130,9 @@ const AdminPanel = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8">
           <div className="flex items-center justify-center mb-8">
-            <div className="bg-slate-800 p-3 rounded-xl text-white text-2xl">💊</div>
+            <div className="bg-slate-800 p-3 rounded-xl text-white text-2xl">
+              💊
+            </div>
           </div>
           <h2 className="text-3xl font-semibold text-center text-gray-800 mb-2">
             Medicine Admin Panel
@@ -73,14 +146,18 @@ const AdminPanel = () => {
               label="Username"
               type="text"
               value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
               onEnter={handleLogin}
             />
             <InputField
               label="Password"
               type="password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               onEnter={handleLogin}
             />
             {error && (
@@ -101,8 +178,12 @@ const AdminPanel = () => {
               Demo Credentials:
             </p>
             <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Super Admin:</strong> superadmin / super123</p>
-              <p><strong>Admin:</strong> admin / admin123</p>
+              <p>
+                <strong>Super Admin:</strong> superadmin / super123
+              </p>
+              <p>
+                <strong>Admin:</strong> admin / admin123
+              </p>
             </div>
           </div>
         </div>
@@ -111,7 +192,11 @@ const AdminPanel = () => {
   }
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-800"}`}>
+    <div
+      className={`min-h-screen ${
+        isDarkMode ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-800"
+      }`}
+    >
       <Header
         username={currentUser.username}
         isSuperAdmin={isSuperAdmin}
@@ -132,7 +217,9 @@ const AdminPanel = () => {
           {activeTab === "dashboard" && <Dashboard websiteData={websiteData} />}
           {activeTab === "medicines" && <Medicines medicines={medicines} />}
           {activeTab !== "dashboard" && activeTab !== "medicines" && (
-            <Placeholder title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} />
+            <Placeholder
+              title={activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            />
           )}
         </main>
       </div>
