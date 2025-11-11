@@ -3,7 +3,8 @@ import { MdDashboard } from "react-icons/md";
 import { FiSearch, FiSun, FiMoon, FiBell, FiChevronDown } from "react-icons/fi";
 
 const Header = ({
-  username,
+  firstName,
+  lastName,
   isSuperAdmin,
   onLogout,
   setIsDarkMode,
@@ -62,7 +63,7 @@ const Header = ({
               className="w-8 h-8 rounded-full"
             />
             <div className="flex items-center gap-1">
-              <span className="text-sm font-medium">{username}</span>
+              <span className="text-sm font-medium">{firstName + " " + lastName}</span>
               <FiChevronDown className="w-4 h-4" />
             </div>
           </button>
