@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../Navbar";
 import Sidebar from "../Sidebar";
@@ -23,6 +23,13 @@ const AdminPanel = () => {
   const [error, setError] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const users = {
     superadmin: {
@@ -53,7 +60,7 @@ const AdminPanel = () => {
       price: 45,
       discount: 10,
       stock: 150,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 2,
@@ -67,7 +74,7 @@ const AdminPanel = () => {
       price: 120,
       discount: 5,
       stock: 45,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 3,
@@ -81,7 +88,7 @@ const AdminPanel = () => {
       price: 35,
       discount: 15,
       stock: 12,
-      lowStock: true
+      lowStock: true,
     },
     {
       id: 4,
@@ -95,7 +102,7 @@ const AdminPanel = () => {
       price: 85,
       discount: 8,
       stock: 89,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 5,
@@ -109,16 +116,22 @@ const AdminPanel = () => {
       price: 150,
       discount: 12,
       stock: 8,
-      lowStock: true
-    }
+      lowStock: true,
+    },
   ];
 
   const handleLogin = async () => {
-    console.log("formData", formData);
-    try{
-      const resp = await axios.post(`${API_URL}/api/user/login`, formData  , value = "login");
-      console.log("resp", resp);
-      if(resp?.data?.success){
+    // console.log("formData", formData);
+    const value = "login";
+    setLoading(true);
+    try {
+      const resp = await axios.post(
+        `${API_URL}/api/user/login`,
+        formData,
+        value
+      );
+      // console.log("resp", resp);
+      if (resp?.data?.success) {
         setIsLoggedIn(true);
         setCurrentUser(resp?.data?.user);
         setActiveTab("dashboard");
@@ -126,16 +139,20 @@ const AdminPanel = () => {
         localStorage.setItem("token", resp?.data?.token);
         alert("Login successful");
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
       alert("Login failed");
+    } finally {
+      setFormData({ password: "", email: "", role: "" });
+      setError("");
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
-    setFormData({ password: "" , email:"" , role:"" });
+    setFormData({ password: "", email: "", role: "" });
     setActiveTab("dashboard");
     setError("");
   };
@@ -188,8 +205,12 @@ const AdminPanel = () => {
                 }
                 className="w-full px-4 py-3 cursor-pointer border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition text-black"
               >
-                <option value="super_admin" className="cursor-pointer">Super Admin</option>
-                <option value="admin" className="cursor-pointer">Admin</option>
+                <option value="super_admin" className="cursor-pointer">
+                  Super Admin
+                </option>
+                <option value="admin" className="cursor-pointer">
+                  Admin
+                </option>
               </select>
             </div>
 
@@ -200,9 +221,17 @@ const AdminPanel = () => {
             )}
             <button
               onClick={handleLogin}
+              disabled={loading}
               className="w-full cursor-pointer bg-slate-800 text-white py-3 rounded-lg font-medium hover:bg-slate-700 transition"
             >
-              Sign In
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span className="ml-2">Loading...</span>
+                </div>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </div>
 
@@ -212,7 +241,8 @@ const AdminPanel = () => {
             </p>
             <div className="text-xs text-gray-600 space-y-1">
               <p>
-                <strong>Super Admin:</strong> Super / Admin / superadmin@gmail.com / superadmin@123
+                <strong>Super Admin:</strong> Super / Admin /
+                superadmin@gmail.com / superadmin@123
               </p>
             </div>
           </div>
@@ -221,6 +251,8 @@ const AdminPanel = () => {
     );
   }
 
+  // console.log("current user", currentUser);
+
   return (
     <div
       className={`min-h-screen ${
@@ -228,8 +260,8 @@ const AdminPanel = () => {
       }`}
     >
       <Header
-        firstName={currentUser.firstName}
-        lastName={currentUser.lastName}
+        firstName={currentUser?.firstName}
+        lastName={currentUser?.lastName}
         isSuperAdmin={isSuperAdmin}
         onLogout={handleLogout}
         setIsDarkMode={setIsDarkMode}

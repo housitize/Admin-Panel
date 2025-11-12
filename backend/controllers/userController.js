@@ -16,11 +16,11 @@ const generateOTP = () => {
 
 //Route for user login
 const loginUser = async (req, res) => {
-  console.log("req.body", req.body);
+  // console.log("req.body", req.body);
   try {
     const { email, password,role , value, updatePassword } = req.body;
 
-    console.log("value", value);
+    // console.log("value", value);
 
     const user = await userModel.findOne({ email });
     if (!user) {

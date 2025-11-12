@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiPlusCircle,
   FiX,
@@ -12,30 +12,33 @@ import {
   FiPackage,
   FiUpload,
 } from "react-icons/fi";
+import ImageUploader from "../ImageUpload";
+import axios from "axios";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Medicines = () => {
   const [showForm, setShowForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [loading, setLoading] = useState(false);
 
   // ✅ Local dummy medicines
-  const [medicines, setMedicines] = useState([
-    {
-      id: 1,
-      name: "Paracetamol",
-      manufacturer: "Sun Pharma",
-      category: "Pain Relief",
-      type: "tablet",
-      stripSize: "10 tablets",
-      batchNo: "BT2024001",
-      expiryDate: "2025-12-15",
-      price: 45,
-      discount: 10,
-      stock: 150,
-      quantity: "10 Tablets",
-      lowStock: false,
-    },
-  ]);
+  const [medicines, setMedicines] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const fetchMedicine = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/api/medicine/getAll`);
+      // console.log("all medicine", response);
+      setMedicines(response?.data?.medicines);
+    } catch (error) {
+      console.error("Error fetching medicines:", error);
+    }
+  };
+  useEffect(() => {
+    fetchMedicine();
+  }, []);
 
   // ✅ Mongoose Schema Fields + Extra UI Fields
   const [formData, setFormData] = useState({
@@ -75,15 +78,110 @@ const Medicines = () => {
       (selectedCategory === "all" || m.category === selectedCategory)
   );
 
+  const token = localStorage.getItem("token");
+
   // ✅ Submit handler
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newMedicine = {
-      id: medicines.length + 1,
-      ...formData,
-    };
-    setMedicines([...medicines, newMedicine]);
-    setShowForm(false);
+    setLoading(true);
+
+    try {
+      const form = new FormData();
+
+      // ✅ Add all text fields (except images)
+      Object.keys(formData).forEach((key) => {
+        if (key !== "images") {
+          form.append(key, formData[key]);
+        }
+      });
+
+      // ✅ Separate existing (Cloudinary) images & new (File) images
+      const existingImages = formData.images
+        .filter((img) => !img.file) // old images (have url & public_id)
+        .map((img) => ({
+          url: img.url,
+          public_id: img.public_id,
+          originalName: img.originalName || "",
+        }));
+
+      // ✅ Append existing images as JSON string
+      form.append("existingImages", JSON.stringify(existingImages));
+
+      // ✅ Append only NEW images
+      formData.images
+        .filter((img) => img.file) // only newly added files
+        .forEach((img) => {
+          form.append("images", img.file);
+        });
+
+      let resp;
+
+      if (isEdit) {
+        // ✅ Update request
+        resp = await axios.put(
+          `${API_URL}/api/medicine/update/${formData._id}`,
+          form,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // ✅ Create new medicine
+        resp = await axios.post(`${API_URL}/api/medicine/create`, form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+
+      // console.log("✅ Response:", resp.data);
+
+      if (resp.data.success) {
+        alert(resp.data.message);
+        fetchMedicine();
+      }
+    } catch (err) {
+      console.error(
+        "❌ Error submitting form:",
+        err.response?.data || err.message
+      );
+    } finally {
+      setShowForm(false);
+      setIsEdit(false);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    // console.log("id", id);
+    try {
+      const resp = await axios.delete(`${API_URL}/api/medicine/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log("✅ Medicine deleted:", resp.data);
+      if (resp.data.success) {
+        alert(resp.data.message);
+        fetchMedicine();
+      }
+    } catch (err) {
+      console.error(
+        "❌ Error deleting medicine:",
+        err.response?.data || err.message
+      );
+    }
+  };
+
+  const handleEdit = (m) => {
+    // console.log("m", m);
+    setIsEdit(true);
+    setShowForm(true);
+    setFormData(m);
   };
 
   return (
@@ -150,7 +248,7 @@ const Medicines = () => {
           <tbody>
             {filteredMedicines.map((m) => (
               <tr
-                key={m.id}
+                key={m._id}
                 className="border-t hover:bg-gray-50 transition text-gray-700"
               >
                 <td className="p-3 font-medium">{m.name}</td>
@@ -158,7 +256,7 @@ const Medicines = () => {
                 <td className="p-3">{m.manufacturer}</td>
                 <td className="p-3 capitalize">{m.type}</td>
                 <td className="p-3 font-mono">{m.batchNo}</td>
-                <td className="p-3">{m.expiryDate}</td>
+                <td className="p-3">{m.expiryDate.split("T")[0]}</td>
                 <td className="p-3 font-semibold">₹{m.price}</td>
                 <td className="p-3">
                   {m.lowStock ? (
@@ -173,10 +271,16 @@ const Medicines = () => {
                   )}
                 </td>
                 <td className="p-3 text-right space-x-2">
-                  <button className="text-blue-600 hover:underline flex items-center gap-1">
+                  <button
+                    onClick={() => handleEdit(m)}
+                    className="text-blue-600 hover:underline cursor-pointer flex items-center gap-1"
+                  >
                     <FiEdit2 size={14} /> Edit
                   </button>
-                  <button className="text-red-600 hover:underline flex items-center gap-1">
+                  <button
+                    onClick={() => handleDelete(m._id)}
+                    className="text-red-600 hover:underline cursor-pointer flex items-center gap-1"
+                  >
                     <FiTrash2 size={14} /> Delete
                   </button>
                 </td>
@@ -203,13 +307,21 @@ const Medicines = () => {
             {/* Close Button */}
             <button
               onClick={() => setShowForm(false)}
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition"
+              className="absolute cursor-pointer top-4 right-4 text-gray-600 hover:text-gray-900 transition"
             >
               <FiX size={24} />
             </button>
 
             <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-              <FiPlusCircle className="text-blue-600" /> Add New Medicine
+              {isEdit ? (
+                <>
+                  <FiEdit2 className="text-blue-600" /> Update Medicine
+                </>
+              ) : (
+                <>
+                  <FiPlusCircle className="text-blue-600" /> Add New Medicine
+                </>
+              )}
             </h3>
 
             <form
@@ -355,29 +467,11 @@ const Medicines = () => {
                 setFormData={setFormData}
               />
 
-              {/* File Inputs */}
-              <div className="col-span-full">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Upload Images
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center cursor-pointer hover:bg-gray-50 transition">
-                  <FiUpload className="mx-auto text-gray-400 mb-2" size={22} />
-                  <p className="text-sm text-gray-500">
-                    Drag & Drop or Click to Upload
-                  </p>
-                  <input
-                    type="file"
-                    multiple
-                    className="hidden"
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        images: Array.from(e.target.files),
-                      })
-                    }
-                  />
-                </div>
-              </div>
+              <ImageUploader
+                formData={formData}
+                setFormData={setFormData}
+                isEdit={isEdit}
+              />
 
               {/* Checkbox */}
               <div className="col-span-full flex items-center gap-2 mt-2">
@@ -391,11 +485,11 @@ const Medicines = () => {
                     })
                   }
                   id="prescriptionRequired"
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-blue-600 cursor-pointer"
                 />
                 <label
                   htmlFor="prescriptionRequired"
-                  className="text-sm text-gray-700"
+                  className="text-sm text-gray-700 "
                 >
                   Prescription Required
                 </label>
@@ -406,15 +500,25 @@ const Medicines = () => {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100"
+                  className="px-4 py-2 cursor-pointer border rounded-lg text-gray-700 hover:bg-gray-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  disabled={loading}
+                  className="px-6 py-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Save Medicine
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+                      <span>{isEdit ? "Updating..." : "Saving..."}</span>
+                    </div>
+                  ) : isEdit ? (
+                    "Update Medicine"
+                  ) : (
+                    "Save Medicine"
+                  )}
                 </button>
               </div>
             </form>
@@ -428,8 +532,8 @@ const Medicines = () => {
 // ✅ Reusable Input
 const Input = ({ label, name, formData, setFormData, type = "text" }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
+    <label className="block text-sm font-medium text-gray-700 mb-2">
+      {label} <span className="text-red-500">*</span>
     </label>
     <input
       type={type}
@@ -447,7 +551,7 @@ const Input = ({ label, name, formData, setFormData, type = "text" }) => (
 const Textarea = ({ label, name, formData, setFormData }) => (
   <div className="col-span-full">
     <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
+      {label} <span className="text-red-500">*</span>
     </label>
     <textarea
       name={name}
