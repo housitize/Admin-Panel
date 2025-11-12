@@ -53,7 +53,7 @@ const AdminPanel = () => {
       price: 45,
       discount: 10,
       stock: 150,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 2,
@@ -67,7 +67,7 @@ const AdminPanel = () => {
       price: 120,
       discount: 5,
       stock: 45,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 3,
@@ -81,7 +81,7 @@ const AdminPanel = () => {
       price: 35,
       discount: 15,
       stock: 12,
-      lowStock: true
+      lowStock: true,
     },
     {
       id: 4,
@@ -95,7 +95,7 @@ const AdminPanel = () => {
       price: 85,
       discount: 8,
       stock: 89,
-      lowStock: false
+      lowStock: false,
     },
     {
       id: 5,
@@ -109,16 +109,21 @@ const AdminPanel = () => {
       price: 150,
       discount: 12,
       stock: 8,
-      lowStock: true
-    }
+      lowStock: true,
+    },
   ];
 
   const handleLogin = async () => {
     console.log("formData", formData);
-    try{
-      const resp = await axios.post(`${API_URL}/api/user/login`, formData  , value = "login");
+    const value = "login";
+    try {
+      const resp = await axios.post(
+        `${API_URL}/api/user/login`,
+        formData,
+        value
+      );
       console.log("resp", resp);
-      if(resp?.data?.success){
+      if (resp?.data?.success) {
         setIsLoggedIn(true);
         setCurrentUser(resp?.data?.user);
         setActiveTab("dashboard");
@@ -126,7 +131,7 @@ const AdminPanel = () => {
         localStorage.setItem("token", resp?.data?.token);
         alert("Login successful");
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
       alert("Login failed");
     }
@@ -135,7 +140,7 @@ const AdminPanel = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
-    setFormData({ password: "" , email:"" , role:"" });
+    setFormData({ password: "", email: "", role: "" });
     setActiveTab("dashboard");
     setError("");
   };
@@ -188,8 +193,12 @@ const AdminPanel = () => {
                 }
                 className="w-full px-4 py-3 cursor-pointer border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition text-black"
               >
-                <option value="super_admin" className="cursor-pointer">Super Admin</option>
-                <option value="admin" className="cursor-pointer">Admin</option>
+                <option value="super_admin" className="cursor-pointer">
+                  Super Admin
+                </option>
+                <option value="admin" className="cursor-pointer">
+                  Admin
+                </option>
               </select>
             </div>
 
@@ -212,7 +221,8 @@ const AdminPanel = () => {
             </p>
             <div className="text-xs text-gray-600 space-y-1">
               <p>
-                <strong>Super Admin:</strong> Super / Admin / superadmin@gmail.com / superadmin@123
+                <strong>Super Admin:</strong> Super / Admin /
+                superadmin@gmail.com / superadmin@123
               </p>
             </div>
           </div>

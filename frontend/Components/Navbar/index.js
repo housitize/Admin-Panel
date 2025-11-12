@@ -58,13 +58,9 @@ const Header = ({
             onClick={() => setShowProfile(!showProfile)}
             className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200"
           >
-            <Image
-              src="/icon"
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-              width={32}
-              height={32}
-            />
+            <div className="w-8 h-8 bg-slate-800 rounded-full overflow-hidden flex items-center justify-center">
+              <p className="text-white text-base font-semibold">{firstName?.[0]?.toUpperCase()}</p>
+            </div>
             <div className="flex items-center gap-1">
               <span className="text-sm font-medium">{firstName + " " + lastName}</span>
               <FiChevronDown className="w-4 h-4" />
