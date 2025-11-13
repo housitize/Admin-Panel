@@ -15,12 +15,9 @@ const authUser = async (req, res, next) => {
   try {
     const token_decode = jwt.verify(token, process.env.JWT_SECRATE);
 
-    // ✅ Ensure req.body is defined before setting userId
-    if (!req.body) {
-      req.body = {};
-    }
+    // console.log("token decoder", token_decode);
 
-    req.body.userId = token_decode.id;
+    req.user = {id: token_decode.id} ;
     next();
   } catch (error) {
     console.log(error);

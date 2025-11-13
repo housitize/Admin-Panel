@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../Navbar";
 import Sidebar from "../Sidebar";
@@ -23,6 +23,13 @@ const AdminPanel = () => {
   const [error, setError] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const users = {
     superadmin: {
@@ -114,15 +121,16 @@ const AdminPanel = () => {
   ];
 
   const handleLogin = async () => {
-    console.log("formData", formData);
+    // console.log("formData", formData);
     const value = "login";
+    setLoading(true);
     try {
       const resp = await axios.post(
         `${API_URL}/api/user/login`,
         formData,
         value
       );
-      console.log("resp", resp);
+      // console.log("resp", resp);
       if (resp?.data?.success) {
         setIsLoggedIn(true);
         setCurrentUser(resp?.data?.user);
@@ -134,6 +142,10 @@ const AdminPanel = () => {
     } catch (err) {
       console.log(err);
       alert("Login failed");
+    } finally {
+      setFormData({ password: "", email: "", role: "" });
+      setError("");
+      setLoading(false);
     }
   };
 
@@ -209,9 +221,17 @@ const AdminPanel = () => {
             )}
             <button
               onClick={handleLogin}
+              disabled={loading}
               className="w-full cursor-pointer bg-slate-800 text-white py-3 rounded-lg font-medium hover:bg-slate-700 transition"
             >
-              Sign In
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span className="ml-2">Loading...</span>
+                </div>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </div>
 
@@ -231,6 +251,8 @@ const AdminPanel = () => {
     );
   }
 
+  // console.log("current user", currentUser);
+
   return (
     <div
       className={`min-h-screen ${
@@ -238,8 +260,8 @@ const AdminPanel = () => {
       }`}
     >
       <Header
-        firstName={currentUser.firstName}
-        lastName={currentUser.lastName}
+        firstName={currentUser?.firstName}
+        lastName={currentUser?.lastName}
         isSuperAdmin={isSuperAdmin}
         onLogout={handleLogout}
         setIsDarkMode={setIsDarkMode}
