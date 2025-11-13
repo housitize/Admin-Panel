@@ -52,8 +52,8 @@ const Reports = () => {
   return (
     <div className="p-6 space-y-5">
       <div className="flex flex-wrap justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-          <FiBarChart2 className="text-slate-700 dark:text-slate-300" /> Reports
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-800 flex items-center gap-2">
+          <FiBarChart2 className="text-slate-700 dark:text-black" /> Reports
           & Analytics
         </h1>
         <button
@@ -195,7 +195,7 @@ const Reports = () => {
               {stockAlerts.map((alert) => (
                 <tr
                   key={alert.id}
-                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="border-b dark:text-white border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <td className="py-3 px-4">{alert.name}</td>
                   <td className="py-3 px-4">{alert.stock}</td>

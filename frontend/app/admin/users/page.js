@@ -42,7 +42,7 @@ const EmployeePanel = () => {
     <div className="p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+        <h2 className="text-2xl font-semibold  text-gray-800 ">
           Employee Management
         </h2>
         <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
@@ -106,7 +106,7 @@ const EmployeePanel = () => {
             {filteredEmployees.map((emp) => (
               <tr
                 key={emp.id}
-                className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/40"
+                className="dark:text-white border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/40"
               >
                 <td className="px-4 py-3">{emp.id}</td>
                 <td className="px-4 py-3">{emp.name}</td>
