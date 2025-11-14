@@ -34,7 +34,11 @@ export default function LoginPage() {
     setLoading(true);
     const value = "login";
     try {
-      const resp = await axios.post(`${API_URL}/api/user/login`, formData ,value );
+      const resp = await axios.post(
+        `${API_URL}/api/user/login`,
+        formData,
+        value
+      );
 
       if (resp.data.success) {
         // Save valid session
