@@ -123,24 +123,12 @@ const OrderManagement = () => {
         deliveryStatus: "Cancelled",
         date: "2024-11-06 14:15",
       },
-      {
-        id: "PO-2024-005",
-        user: "MediCare Supplies",
-        medicines: [
-          "Omeprazole 40mg (1000 units)",
-          "Pantoprazole 40mg (800 units)",
-        ],
-        totalAmount: 67500,
-        paymentStatus: "Failed",
-        deliveryStatus: "Cancelled",
-        date: "2024-11-06 14:15",
-      },
     ],
   });
 
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // Filter orders based on delivery status
+  // Filter logic
   const filteredOrders = useMemo(() => {
     const currentOrders = orders[activeTab];
     if (filterStatus === "all") return currentOrders;
@@ -159,7 +147,7 @@ const OrderManagement = () => {
     });
   }, [orders, activeTab, filterStatus]);
 
-  // Calculate statistics
+  // Stats
   const stats = useMemo(() => {
     const currentOrders = orders[activeTab];
     return {
@@ -191,47 +179,36 @@ const OrderManagement = () => {
     return colors[type][status] || "bg-gray-100 text-gray-800 border-gray-200";
   };
 
-  const updatePaymentStatus = (orderId, newStatus) => {
+  const updatePaymentStatus = (id, status) => {
     setOrders((prev) => ({
       ...prev,
-      [activeTab]: prev[activeTab].map((order) =>
-        order.id === orderId ? { ...order, paymentStatus: newStatus } : order
+      [activeTab]: prev[activeTab].map((o) =>
+        o.id === id ? { ...o, paymentStatus: status } : o
       ),
     }));
   };
 
-  const updateDeliveryStatus = (orderId, newStatus) => {
+  const updateDeliveryStatus = (id, status) => {
     setOrders((prev) => ({
       ...prev,
-      [activeTab]: prev[activeTab].map((order) =>
-        order.id === orderId ? { ...order, deliveryStatus: newStatus } : order
+      [activeTab]: prev[activeTab].map((o) =>
+        o.id === id ? { ...o, deliveryStatus: status } : o
       ),
     }));
-  };
-
-  const downloadInvoice = (orderId) => {
-    alert(`Downloading invoice for ${orderId}`);
-  };
-
-  const refundOrder = (orderId) => {
-    if (confirm(`Are you sure you want to refund order ${orderId}?`)) {
-      updatePaymentStatus(orderId, "Refunded");
-      alert(`Order ${orderId} has been refunded`);
-    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Order Management
-          </h1>
-          <p className="text-gray-600">Track and manage all customer orders</p>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Order Management
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Track and manage all customer orders
+        </p>
 
-        {/* Tab Switcher */}
+        {/* Tabs */}
         <div className="bg-white border border-gray-200 rounded-lg p-1 mb-6 inline-flex">
           <button
             onClick={() => {
@@ -240,7 +217,7 @@ const OrderManagement = () => {
             }}
             className={`px-6 py-2 rounded-md font-medium transition-all ${
               activeTab === "user"
-                ? "bg-gray-900 text-white"
+                ? "bg-teal-600 text-white"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -253,7 +230,7 @@ const OrderManagement = () => {
             }}
             className={`px-6 py-2 rounded-md font-medium transition-all ${
               activeTab === "company"
-                ? "bg-gray-900 text-white"
+                ? "bg-teal-600 text-white"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -261,7 +238,7 @@ const OrderManagement = () => {
           </button>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <p className="text-sm text-gray-600 mb-1">Total Orders</p>
@@ -297,7 +274,7 @@ const OrderManagement = () => {
                 onClick={() => setFilterStatus("all")}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   filterStatus === "all"
-                    ? "bg-gray-900 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
@@ -307,7 +284,7 @@ const OrderManagement = () => {
                 onClick={() => setFilterStatus("completed")}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   filterStatus === "completed"
-                    ? "bg-green-600 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-green-50 text-green-700 border border-green-200 hover:bg-green-100"
                 }`}
               >
@@ -317,7 +294,7 @@ const OrderManagement = () => {
                 onClick={() => setFilterStatus("pending")}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   filterStatus === "pending"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100"
                 }`}
               >
@@ -327,7 +304,7 @@ const OrderManagement = () => {
                 onClick={() => setFilterStatus("cancelled")}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   filterStatus === "cancelled"
-                    ? "bg-gray-700 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200"
                 }`}
               >
@@ -368,7 +345,7 @@ const OrderManagement = () => {
                       </span>
                     </div>
 
-                    {/* Medicine List */}
+                    {/* Medicines */}
                     <div className="bg-gray-50 border border-gray-200 rounded-md p-3">
                       <p className="text-xs font-medium text-gray-700 mb-2">
                         {activeTab === "user" ? "MEDICINES" : "STOCK ITEMS"}
@@ -385,7 +362,7 @@ const OrderManagement = () => {
                       </div>
                     </div>
 
-                    {/* Status and Amount */}
+                    {/* Status */}
                     <div className="flex flex-wrap items-center gap-3">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-medium text-gray-600">
@@ -424,8 +401,8 @@ const OrderManagement = () => {
                   {/* Actions */}
                   <div className="flex lg:flex-col gap-2 border-t lg:border-t-0 lg:border-l border-gray-200 pt-4 lg:pt-0 lg:pl-6">
                     <button
-                      onClick={() => downloadInvoice(order.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors text-sm font-medium"
+                      onClick={() => alert("Invoice downloaded")}
+                      className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors text-sm font-medium"
                     >
                       <MdDownload size={16} />
                       Invoice
@@ -433,8 +410,8 @@ const OrderManagement = () => {
 
                     {order.paymentStatus === "Paid" && (
                       <button
-                        onClick={() => refundOrder(order.id)}
-                        className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+                        onClick={() => alert("Refund processed")}
+                        className="flex items-center gap-2 px-4 py-2 border border-teal-600 text-teal-700 rounded-md hover:bg-teal-50 transition-colors text-sm font-medium"
                       >
                         <MdAttachMoney size={16} />
                         Refund
@@ -443,7 +420,7 @@ const OrderManagement = () => {
 
                     <button
                       onClick={() => setSelectedOrder(order)}
-                      className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+                      className="flex items-center gap-2 px-4 py-2 border border-teal-600 text-teal-700 rounded-md hover:bg-teal-50 transition-colors text-sm font-medium"
                     >
                       <MdRefresh size={16} />
                       Update
@@ -455,9 +432,9 @@ const OrderManagement = () => {
           </div>
         )}
 
-        {/* Update Status Modal */}
+        {/* MODAL */}
         {selectedOrder && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg p-6 max-w-md w-full">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900">
@@ -471,13 +448,12 @@ const OrderManagement = () => {
                 </button>
               </div>
 
-              <p className="text-sm text-gray-600 mb-6">{selectedOrder.id}</p>
-
-              {/* Payment Status */}
+              {/* Payment */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
                   Payment Status
                 </label>
+
                 <div className="grid grid-cols-3 gap-2">
                   {["Paid", "Pending", "Failed"].map((status) => (
                     <button
@@ -487,7 +463,7 @@ const OrderManagement = () => {
                       }
                       className={`px-3 py-2 rounded-md border text-sm font-medium transition-all ${
                         selectedOrder.paymentStatus === status
-                          ? "bg-gray-900 text-white border-gray-900"
+                          ? "bg-teal-600 text-white border-teal-600"
                           : "border-gray-300 text-gray-700 hover:border-gray-400"
                       }`}
                     >
@@ -497,11 +473,12 @@ const OrderManagement = () => {
                 </div>
               </div>
 
-              {/* Delivery Status */}
+              {/* Delivery */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="text-sm font-medium text-gray-700 mb-2 block">
                   Delivery Status
                 </label>
+
                 <div className="grid grid-cols-2 gap-2">
                   {["Processing", "Shipped", "Delivered", "Cancelled"].map(
                     (status) => (
@@ -512,7 +489,7 @@ const OrderManagement = () => {
                         }
                         className={`px-3 py-2 rounded-md border text-sm font-medium transition-all ${
                           selectedOrder.deliveryStatus === status
-                            ? "bg-gray-900 text-white border-gray-900"
+                            ? "bg-teal-600 text-white border-teal-600"
                             : "border-gray-300 text-gray-700 hover:border-gray-400"
                         }`}
                       >
@@ -525,7 +502,7 @@ const OrderManagement = () => {
 
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="w-full px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors font-medium"
+                className="w-full px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors font-medium"
               >
                 Done
               </button>

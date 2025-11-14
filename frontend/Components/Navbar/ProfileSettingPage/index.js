@@ -2,15 +2,10 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import {
-  FiUser,
-  FiSave,
-  FiCamera,
-  FiShield,
-} from "react-icons/fi";
+import { FiUser, FiSave, FiCamera, FiShield } from "react-icons/fi";
 
 const ProfileSettings = () => {
-  const [mounted, setMounted] = useState(false); // Prevent hydration error
+  const [mounted, setMounted] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,10 +43,10 @@ const ProfileSettings = () => {
     alert("✅ Profile updated successfully!");
   };
 
-  if (!mounted) return null; // Fix hydration issue
+  if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-6 py-10">
+    <div className="min-h-screen bg-white px-6 py-10">
       {/* Header */}
       <div className="max-w-5xl mx-auto mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -62,20 +57,19 @@ const ProfileSettings = () => {
         </p>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-
+      {/* Main Card */}
+      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-md p-8">
         {/* Profile Header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
           <div className="relative">
             <Image
               src="/icon"
               alt="Profile"
-              className="w-28 h-28 rounded-full border-4 border-blue-100 shadow-sm"
+              className="w-28 h-28 rounded-full shadow"
               width={128}
               height={128}
             />
-            <button className="absolute bottom-1 right-1 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
+            <button className="absolute bottom-1 right-1 bg-teal-600 text-white p-2 rounded-full hover:bg-teal-700 transition">
               <FiCamera size={16} />
             </button>
           </div>
@@ -85,13 +79,14 @@ const ProfileSettings = () => {
               {formData.name}
             </h2>
             <p className="text-gray-500">{formData.role}</p>
-            <button className="mt-3 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+
+            <button className="mt-3 px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition">
               Change Profile Photo
             </button>
           </div>
         </div>
 
-        {/* Personal Info */}
+        {/* Form Sections */}
         <form onSubmit={handleSubmit} className="space-y-10">
           <Section title="Personal Information" icon={<FiUser />}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -119,7 +114,7 @@ const ProfileSettings = () => {
             </div>
           </Section>
 
-          {/* Security */}
+          {/* Security Section */}
           <Section title="Security Settings" icon={<FiShield />}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <Input
@@ -143,7 +138,7 @@ const ProfileSettings = () => {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="flex items-center gap-2 px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
             >
               <FiSave /> Save Changes
             </button>
@@ -154,12 +149,12 @@ const ProfileSettings = () => {
   );
 };
 
-/* ---------- Reusable Components ---------- */
+/* ---------- Components ---------- */
 
 const Section = ({ title, icon, children }) => (
-  <div className="border-b border-gray-100 pb-8">
+  <div className="pb-8">
     <div className="flex items-center gap-2 mb-5">
-      <div className="text-blue-600">{icon}</div>
+      <div className="text-teal-600">{icon}</div>
       <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
     </div>
     {children}
@@ -176,9 +171,9 @@ const Input = ({ label, type = "text", value, onChange, disabled }) => (
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition ${
-        disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
-      }`}
+      className={`w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-800 
+        focus:ring-2 focus:ring-teal-500 outline-none transition
+        ${disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
     />
   </div>
 );

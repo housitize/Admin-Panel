@@ -86,7 +86,7 @@ export default function AdminLayout({ children }) {
             router.replace("/login");
           }}
         />
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-6 ml-16">{children}</main>
       </div>
     </div>
   );
