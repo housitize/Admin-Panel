@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 import { MdDashboard } from "react-icons/md";
 import {
   FiPackage,
@@ -11,8 +14,9 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 
-
 const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
+  const router = useRouter();
+
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <MdDashboard /> },
     { id: "medicines", label: "Medicines", icon: <FiPackage /> },
@@ -23,6 +27,11 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
     { id: "reports", label: "Reports", icon: <FiPieChart /> },
     { id: "settings", label: "Settings", icon: <FiSettings /> },
   ];
+
+  const handleNavigation = (tabId) => {
+    setActiveTab(tabId);
+    router.push(`/admin/${tabId}`); // ⭐ Redirect to route
+  };
 
   return (
     <aside className="w-64 bg-white h-screen sticky top-0 shadow-sm border-r flex flex-col justify-between">
@@ -37,7 +46,7 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
           {menuItems.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleNavigation(tab.id)}
               className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition ${
                 activeTab === tab.id
                   ? "bg-slate-100 text-slate-900 font-medium"
