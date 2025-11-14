@@ -9,36 +9,45 @@ import Sidebar from "../../Components/Sidebar";
 export default function AdminLayout({ children }) {
   const router = useRouter();
 
-  const [user] = useState(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
-
-      if (token && storedUser) {
-        try {
-          return JSON.parse(storedUser);
-        } catch {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-        }
-      }
-    }
-    return null;
-  });
-
-  const isLoggedIn = !!user;
+  const [mounted, setMounted] = useState(false); // 👈 FIX
+  const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("dashboard");
-
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    // 👇 Now this runs only on client side
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (token && storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+
+    setMounted(true); // 👈 Allow component to render only after client loads
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !user) {
       router.replace("/login");
     }
-  }, [isLoggedIn, router]);
+  }, [mounted, user, router]);
 
-  if (!isLoggedIn) {
+  // 👇 Prevent hydration error by rendering nothing until mounted
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
         Loading...

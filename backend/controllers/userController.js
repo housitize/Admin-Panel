@@ -18,7 +18,7 @@ const generateOTP = () => {
 const loginUser = async (req, res) => {
   // console.log("req.body", req.body);
   try {
-    const { email, password,role , value, updatePassword } = req.body;
+    const { email, password , value, updatePassword } = req.body;
 
     // console.log("value", value);
 
@@ -36,13 +36,6 @@ const loginUser = async (req, res) => {
         return res
           .status(400)
           .json({ success: false, message: "Invalid credentials" });
-      }
-
-      const isRoleMatch = user.role === role;
-      if (!isRoleMatch) {
-        return res
-          .status(400)
-          .json({ success: false, message: "You are not an admin" });
       }
     }
 

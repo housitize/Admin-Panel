@@ -25,7 +25,7 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
     { id: "users", label: "Users", icon: <FiUsers /> },
     { id: "inventory", label: "Inventory", icon: <FiBox /> },
     { id: "reports", label: "Reports", icon: <FiPieChart /> },
-    { id: "settings", label: "Settings", icon: <FiSettings /> },
+    { id: "profile", label: "Settings", icon: <FiSettings /> },
   ];
 
   const handleNavigation = (tabId) => {
@@ -47,7 +47,7 @@ const Sidebar = ({ activeTab, setActiveTab, handleLogout }) => {
             <button
               key={tab.id}
               onClick={() => handleNavigation(tab.id)}
-              className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition ${
+              className={`w-full flex items-center gap-3 px-4 py-2 cursor-pointer rounded-lg transition ${
                 activeTab === tab.id
                   ? "bg-slate-100 text-slate-900 font-medium"
                   : "text-gray-600 hover:bg-gray-50"

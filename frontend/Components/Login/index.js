@@ -41,24 +41,6 @@ const Login = ({ formData, setFormData, loading, error, onLogin }) => {
             onEnter={onLogin}
           />
 
-          {/* Role Dropdown */}
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-2">
-              Role
-            </label>
-            <select
-              value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-              className="w-full px-4 py-3 cursor-pointer border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition text-black"
-            >
-              <option value="">Select Role</option>
-              <option value="super_admin">Super Admin</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
           {/* Error Message */}
           {error && (
             <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
@@ -89,8 +71,7 @@ const Login = ({ formData, setFormData, loading, error, onLogin }) => {
           </p>
           <div className="text-xs text-gray-600 space-y-1">
             <p>
-              <strong>Super Admin:</strong> Super / Admin / superadmin@gmail.com
-              / superadmin@123
+              <strong>Super Admin:</strong> superadmin@gmail.com / superadmin@123
             </p>
           </div>
         </div>

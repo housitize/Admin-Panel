@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from "react";
 import { FiUsers, FiShoppingBag, FiPackage, FiDollarSign, FiAlertTriangle, FiAlertCircle, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";

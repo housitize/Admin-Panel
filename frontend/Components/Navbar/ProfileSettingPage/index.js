@@ -1,25 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiUser,
-  FiMail,
-  FiLock,
   FiSave,
   FiCamera,
   FiShield,
 } from "react-icons/fi";
 
 const ProfileSettings = () => {
+  const [mounted, setMounted] = useState(false); // Prevent hydration error
+
   const [formData, setFormData] = useState({
-    name: "Ishit Verma",
-    email: "ishit.verma@example.com",
-    role: "Super Admin",
-    phone: "+91 98765 43210",
+    name: "",
+    email: "",
+    role: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+
+      setFormData({
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email || "",
+        role: user.role || "",
+        phone: user.phone || "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+
+    setMounted(true);
+  }, []);
 
   const handleChange = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -29,10 +48,10 @@ const ProfileSettings = () => {
     alert("✅ Profile updated successfully!");
   };
 
+  if (!mounted) return null; // Fix hydration issue
+
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-6 py-10`}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-6 py-10">
       {/* Header */}
       <div className="max-w-5xl mx-auto mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
@@ -45,6 +64,7 @@ const ProfileSettings = () => {
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+
         {/* Profile Header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-10">
           <div className="relative">
@@ -59,6 +79,7 @@ const ProfileSettings = () => {
               <FiCamera size={16} />
             </button>
           </div>
+
           <div>
             <h2 className="text-2xl font-semibold text-gray-800 mb-1">
               {formData.name}
@@ -116,9 +137,6 @@ const ProfileSettings = () => {
                 }
               />
             </div>
-            <p className="text-sm text-gray-500 mt-2">
-              Use 8 or more characters with a mix of letters, numbers & symbols.
-            </p>
           </Section>
 
           {/* Save Button */}
@@ -164,45 +182,5 @@ const Input = ({ label, type = "text", value, onChange, disabled }) => (
     />
   </div>
 );
-
-// select resuable component
-// const Select = ({ label, value, onChange, options }) => (
-//   <div className="text-black">
-//     <label className="block text-sm font-medium text-gray-600 mb-1">
-//       {label}
-//     </label>
-//     <select
-//       value={value}
-//       onChange={onChange}
-//       className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-//     >
-//       {options.map((opt) => (
-//         <option key={opt}>{opt}</option>
-//       ))}
-//     </select>
-//   </div>
-// );
-
-// toggle resusable component
-// const Toggle = ({ label, checked, onChange, icon }) => (
-//   <div className="flex items-center justify-between p-4 border rounded-xl w-full sm:w-1/2 hover:shadow-md transition bg-gray-50">
-//     <div className="flex items-center gap-3">
-//       <div className="text-blue-600">{icon}</div>
-//       <span className="font-medium text-gray-700 text-sm">{label}</span>
-//     </div>
-//     <button
-//       onClick={onChange}
-//       className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-//         checked ? "bg-blue-600" : "bg-gray-300"
-//       }`}
-//     >
-//       <span
-//         className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
-//           checked ? "translate-x-6" : "translate-x-1"
-//         }`}
-//       />
-//     </button>
-//   </div>
-// );
 
 export default ProfileSettings;
